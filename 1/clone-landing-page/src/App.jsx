@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import { Navbar } from './components/Navbar'
 import { SuggestionCard } from './components/SuggestionCard'
@@ -15,19 +14,22 @@ function App() {
   return (
     <>
       <Navbar appTitle='Uber'></Navbar>
-      <section className="mx-30 my-10">
-        <LocationCard city='Madison' country='US'></LocationCard>
-
-      </section>
-      <section className="mx-30">
-        <h1 className="text-3xl font-bold mb-8">Suggestions</h1>
-        <div className="flex flex-wrap">
-        {suggestions.map((s) => {
-          return <SuggestionCard
-            title={s.title} context={s.context} img={s.img}></SuggestionCard>
-        })}
+      <section className="flex justify-center my-10">
+        <div className="block w-[1100px]">
+          <LocationCard city='Madison' country='US'></LocationCard>
         </div>
       </section>
+      <secstion className="flex justify-center w-full">
+        <div className="block w-[1100px]">
+          <h1 className="text-3xl font-bold mb-8">Suggestions</h1>
+          <div className="flex flex-wrap">
+          {suggestions.map((s) => {
+            return <SuggestionCard
+              title={s.title} context={s.context} img={s.img}></SuggestionCard>
+          })}
+          </div>
+        </div>
+      </secstion>
     </>
   )
 }

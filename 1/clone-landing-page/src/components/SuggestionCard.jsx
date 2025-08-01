@@ -2,7 +2,7 @@ import React from "react";
 
 export const SuggestionCard = ({ title, context, img }) => {
   return (
-    <div className="box-border w-full md:w-1/2 lg:w-1/3 p-2">
+    <div className="box-border w-full md:w-1/2 xl:w-1/3 p-2">
         <div className="flex justify-between items-center bg-gray-100 rounded-xl gap-4 h-full">
         <div className="flex flex-col gap-5 py-2 px-3 items-between">
             <div className="font-semibold text-l">{title}</div>

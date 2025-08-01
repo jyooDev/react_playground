@@ -21,7 +21,7 @@ function App() {
       </section>
       <section className="mx-30">
         <h1 className="text-3xl font-bold mb-8">Suggestions</h1>
-        <div class="grid grid-cols-2 gap-5 flex-1">
+        <div className="flex flex-wrap">
         {suggestions.map((s) => {
           return <SuggestionCard
             title={s.title} context={s.context} img={s.img}></SuggestionCard>

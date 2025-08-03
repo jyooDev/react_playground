@@ -10,7 +10,7 @@ export const Navbar = ({ appTitle }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="bg-black text-white flex justify-center w-full py-4">
+        <div className="bg-black text-white flex justify-center w-full py-4 m-0">
             <div className="flex justify-between items-center w-[1100px]">
                 <div className="flex justify-start items-center gap-5">
                     <div className="ml-4 font-thin-100 text-2xl">
@@ -23,17 +23,17 @@ export const Navbar = ({ appTitle }) => {
                         <div className="transition ease-in-out duration-300 hover:bg-white/20 rounded-full py-1 px-4">Uber Eats</div>
                         <div className="relative flex flex-col flex-start items-center transition ease-in-out duration-300 hover:bg-white/20 rounded-full py-1 px-4">
                             <button onClick={() => setIsOpen(!isOpen)} className="bg-transparent w-fit h-fit">About</button> 
-                            <ul className={`${isOpen ? '' : 'hidden'} absolute top-12 shadow-md shadow-gray-400 rounded-sm bg-white list-none text-gray-700 flex flex-col justify-center items-center w-[130px]`}>
+                            <ul className={`${isOpen ? '' : 'hidden'} absolute top-12 shadow-md shadow-gray-400 rounded-sm bg-white text-xs list-none text-gray-700 flex flex-col justify-center items-start w-[130px]`}>
                                     <li className="px-3 py-2">About us</li>
                                     <li className="px-3 py-2">Our offerings</li>
                                     <li className="px-3 py-2">How Uber works</li>
                                     <li className="px-3 py-2">Sustainability</li>
-                                    <li className="px-3 py-2">About us</li>
-                                    <li className="px-3 py-2">About us</li>
-                                    <li className="px-3 py-2">About us</li>
-                                    <li className="px-3 py-2">About us</li>
-                                    <li className="px-3 py-2">About us</li>
-                                    <li className="px-3 py-2">About us</li>
+                                    <li className="px-3 py-2">Explore</li>
+                                    <li className="px-3 py-2">Newsroom</li>
+                                    <li className="px-3 py-2">Investor relations</li>
+                                    <li className="px-3 py-2">Autonomous</li>
+                                    <li className="px-3 py-2">Blog</li>
+                                    <li className="px-3 py-2">Careers</li>
                             </ul>
                         </div>
                     </div>

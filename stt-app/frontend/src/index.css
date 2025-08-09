@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@theme{
+    --color-primary-purple: #1c003a;
+    --color-primary-middlepink:  #a82c60;
+    --color-primary-darkpink:  #a72b5f;
+}

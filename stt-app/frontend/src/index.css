@@ -5,3 +5,37 @@
     --color-primary-middlepink:  #a82c60;
     --color-primary-darkpink:  #a72b5f;
 }
+
+@layer utilities {
+  /* Firefox */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(31 41 55) transparent; /* thumb track */
+  }
+
+  /* WebKit */
+  .scrollbar-webkit::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  .scrollbar-webkit::-webkit-scrollbar-track {
+    background: transparent; /* 하얀 배경 제거 */
+  }
+  .scrollbar-webkit::-webkit-scrollbar-thumb {
+    background-color: rgb(31 41 55);
+    border-radius: 20px;
+    border: 2px solid transparent; /* 흰 테두리 제거 */
+    background-clip: content-box;
+  }
+  .scrollbar-webkit::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(55 65 81);
+  }
+  .scrollbar-webkit::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* 선택: 스크롤바 여백 고정 */
+  .scrollbar-gutter-stable {
+    scrollbar-gutter: stable both-edges;
+  }
+}

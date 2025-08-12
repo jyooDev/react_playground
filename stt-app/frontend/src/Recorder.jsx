@@ -2,12 +2,14 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 import { VscDebugStart, VscDebugPause, VscDebugStop } from "react-icons/vsc";
 import { TranscriptBox } from "./TranscriptBox.jsx";
-
+import { EmojiBox } from "./EmojiBox.jsx";
 export default function Recorder() {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [recordURL, setRecordURL] = useState("");
   const [translationLoading, setTranslationLoading] = useState(false);
+  const [emojiLoading, setEmojiLoading] = useState(false);
+  const [emojis, setEmojis] = useState("");
   const recorderRef = useRef(null);
   const streamRef = useRef(null);
   const chunksRef = useRef([]); 
@@ -15,6 +17,7 @@ export default function Recorder() {
   async function start() {
     if (listening) return;
     setRecordURL('');
+    setTranslationLoading(false);
     try {
       streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mimeType = "audio/webm";
@@ -36,16 +39,18 @@ export default function Recorder() {
       };
 
       recorderRef.current.onstop = async (e) => {
-        console.log("DATA ON STOP IS CALLED");
         console.log(chunksRef.current);
         const fullBlob = new Blob(chunksRef.current, { type: "audio/webm" });
         const audioURL = URL.createObjectURL(fullBlob);
         const form = new FormData();
         form.append("file", fullBlob, "sofar.webm");
         try {
+          setTranslationLoading(true);
           const res = await axios.post("http://localhost:3001/api/transcribe", form);
+          setTranslationLoading(false);
           setTranscript(res.data.transcript);
           setRecordURL(audioURL);
+          setEmojiLoading(true);
         } catch (error) {
           console.error("Upload failed:", error?.response?.data || error);
         }
@@ -78,7 +83,11 @@ export default function Recorder() {
           {recordURL && <audio controls src={recordURL}/>}
         </div>
         <div>
-          <TranscriptBox transcript={transcript}/>
+          <TranscriptBox loading={translationLoading} transcript={transcript}/>
+        </div>
+        <div>
+          <EmojiBox emojis=""/>
+          { emojiLoading ? (<EmojiBox loading={emojiLoading} emojis={emojis}/>) : ('')}
         </div>
       </div>
     </div>

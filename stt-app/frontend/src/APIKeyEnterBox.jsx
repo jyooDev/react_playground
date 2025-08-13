@@ -34,7 +34,7 @@ export const APIKeyEnterBox = () => {
 
 
     return (
-        <div className='flex justify-center items-center gap-2'>
+        <div className='z-20 flex justify-center items-center gap-2'>
         <input id='apiKeyInputBox' type='text' onChange={(e) => setInputValue(e.target.value)} value={inputValue} placeholder={placeholder} className="bg-white/10 flex text-center w-fit border border-gray-300 px-3 py-1 rounded focus:border-[var(--color-sunset-orange)]"></input>
         {!haveKey ? 
         <button onClick={saveAPIKey} className='bg-white/50 py-1 px-2 rounded text-md font-semibold text-[var(--color-sunset-purple)] shadow hover:bg-white/70 transition ease-in-out'>SAVE</button>

@@ -11,10 +11,10 @@ function App() {
       <div className="relative text-6xl opacity-20 animate-marquee whitespace-nowrap">
           {rotatingEmojis}
       </div>
-      <h1 className="opacity-78 relative flex justify-center w-full text-8xl text-[var(--color-beige)] font-bold text-shadow-md">Record Your Day With Emoji</h1>
+      <h1 className="z-20 opacity-78 relative flex justify-center w-full text-8xl text-[var(--color-beige)] font-bold text-shadow-md">Record Your Day With Emoji</h1>
       <APIKeyEnterBox/>
       <Recorder/>
-      <div className="w-full overflow-hidden absolute bottom-10">
+      <div className="z-0 w-full overflow-hidden absolute bottom-10">
         <div className="text-6xl opacity-20 animate-marquee-right whitespace-nowrap">
           {rotatingEmojis}
         </div>

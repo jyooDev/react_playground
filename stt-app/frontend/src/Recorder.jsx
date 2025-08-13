@@ -115,7 +115,7 @@ export default function Recorder() {
   }
 
   return (
-    <div className="flex items-center w-full max-w-screen h-full">
+    <div className="z-20 flex items-center w-full max-w-screen h-full">
       <div className="flex flex-col justify-center items-center w-full gap-5">
         <button onClick={start} className={listening ? 'hidden' : 'visible'}><VscDebugStart className="hover:bg-white/50 transition ease-in-out w-30 h-30 text-white bg-white/30 p-3 rounded-full"/></button>
         <button onClick={stop} className={listening ? 'visible' : 'hidden'}><VscDebugStop className="hover:bg-white/50 w-30 h-30 text-white bg-white/30 p-3 rounded-full"/></button>

@@ -18,6 +18,9 @@ export default function Recorder() {
     if (listening) return;
     setRecordURL('');
     setTranslationLoading(false);
+    setEmojiLoading(false);
+    setEmojis("");
+    setTranscript("");
     try {
       streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mimeType = "audio/webm";
@@ -33,9 +36,7 @@ export default function Recorder() {
       recorderRef.current.start();
 
       recorderRef.current.ondataavailable = async (e) => {
-        console.log("DATA AVAILABLE CALLED");
         chunksRef.current.push(e.data);
-        console.log("DATA IS AVAILABLE");
       };
 
       recorderRef.current.onstop = async (e) => {
@@ -46,11 +47,23 @@ export default function Recorder() {
         form.append("file", fullBlob, "sofar.webm");
         try {
           setTranslationLoading(true);
-          const res = await axios.post("http://localhost:3001/api/transcribe", form);
+          const trRes = await axios.post("http://localhost:3001/api/transcribe", form);
           setTranslationLoading(false);
-          setTranscript(res.data.transcript);
+
+          const newTranscript = trRes.data.transcript || "";
+          setTranscript(newTranscript);
           setRecordURL(audioURL);
+
           setEmojiLoading(true);
+          console.log(newTranscript);
+          const emojiRes = await axios.post("http://localhost:3001/api/generate-emojis", 
+            { transcript: newTranscript },
+            { headers: { "Content-Type": "application/json" } }
+          );
+          console.log(emojiRes);
+          const emojiStr = emojiRes.data.join(" ");
+          setEmojis(emojiStr || "");
+          setEmojiLoading(false);
         } catch (error) {
           console.error("Upload failed:", error?.response?.data || error);
         }
@@ -86,8 +99,7 @@ export default function Recorder() {
           <TranscriptBox loading={translationLoading} transcript={transcript}/>
         </div>
         <div>
-          <EmojiBox emojis=""/>
-          { emojiLoading ? (<EmojiBox loading={emojiLoading} emojis={emojis}/>) : ('')}
+          { emojis || emojiLoading ? (<EmojiBox loading={emojiLoading} emojis={emojis}/>) : ('')}
         </div>
       </div>
     </div>

@@ -3,14 +3,14 @@ import express from "express";
 import cors from "cors";
 import multer from "multer";
 import { OpenAI } from "openai";
-import { toFile } from "openai/uploads"; // ★ 버퍼→File 변환
+import { toFile } from "openai/uploads";
 
 const app = express();
 
-// CORS (필요 시 origin 제한)
-app.use(cors());
 
-// 25MB 제한 예시 (실사용에 맞게 조정)
+app.use(cors());
+app.use(express.json()); 
+
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 25 * 1024 * 1024 },
@@ -38,7 +38,6 @@ app.post("/api/transcribe", upload.single("file"), async (req, res) => {
     if (![...ALLOWED_MIME].some(t => mime.startsWith(t.split(";")[0]))) {
       return res.status(415).json({ error: `unsupported content-type: ${mime}` });
     }
-
     
     const file = await toFile(req.file.buffer, "rec.webm", { type: mime });
 
@@ -50,6 +49,47 @@ app.post("/api/transcribe", upload.single("file"), async (req, res) => {
     return res.json({ transcript: tr.text ?? "" });
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ error: err?.message ?? "internal error" });
+  }
+});
+
+app.post("/api/generate-emojis", async (req, res) => {
+  try {
+    console.log("POST /api/generate-emojis");
+    const { transcript } = req.body || {};
+    console.log("transcript:", transcript);
+
+    if (!transcript || typeof transcript !== "string" || !transcript.trim()) {
+      return res.status(400).json({ error: "Transcript is required" });
+    }
+
+    const EMOJI_SYSTEM_INSTRUCTIONS = `
+You are an emoji recommender for diary entries.
+Rules:
+- Return ONLY emojis capturing the overall feelings, events, and vibes of the diary (no words).
+- 1 to 10 unique emojis total. Deduplicate similar ones (e.g., 😀 vs 😃).
+- Balance emotions (positive/negative/mixed); include context emojis (e.g., ☕️, 🌧️) only if clearly mentioned.
+- Reflect the whole day, not just one sentence.
+- Output as JSON that matches the given schema.
+`;
+
+    const response = await openai.responses.create({
+      model: "gpt-4o-mini",
+      instructions: EMOJI_SYSTEM_INSTRUCTIONS,
+      input: `DIARY:\n${transcript}`,      
+    });
+
+    let emojis = [];
+    console.log(response);
+    let raw = response.output_text.trim();
+    raw = raw.replace(/^```(?:json)?/i, "").replace(/```$/i, "").trim();
+    console.log(raw);
+    console.log(JSON.parse(raw));
+    const parsed = JSON.parse(raw);
+    emojis = parsed.emojis;
+    return res.json(emojis);
+  } catch (err) {
+    console.error("generate-emojis error:", err);
     return res.status(500).json({ error: err?.message ?? "internal error" });
   }
 });

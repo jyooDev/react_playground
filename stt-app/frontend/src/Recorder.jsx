@@ -4,6 +4,7 @@ import { VscDebugStart, VscDebugPause, VscDebugStop } from "react-icons/vsc";
 import { TranscriptBox } from "./TranscriptBox.jsx";
 import { EmojiBox } from "./EmojiBox.jsx";
 export default function Recorder() {
+
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [recordURL, setRecordURL] = useState("");
@@ -23,7 +24,6 @@ export default function Recorder() {
     setTranscript("");
     try {
       streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mimeType = "audio/webm";
       const options = {
         audioBitsPerSecond: 128000,
         mimeType: "audio/webm;codecs=opus",
@@ -44,28 +44,54 @@ export default function Recorder() {
         const fullBlob = new Blob(chunksRef.current, { type: "audio/webm" });
         const audioURL = URL.createObjectURL(fullBlob);
         const form = new FormData();
+        const apiKey = localStorage.getItem('OPENAI_KEY') || '';
+        console.log("API KEY", apiKey);
+        let newTranscript = ''
         form.append("file", fullBlob, "sofar.webm");
         try {
           setTranslationLoading(true);
-          const trRes = await axios.post("http://localhost:3001/api/transcribe", form);
-          setTranslationLoading(false);
+          const trRes = await axios.post("http://localhost:3001/api/transcribe", 
+            form,
+          {
+            headers: {
+              "x-user-api-key": apiKey,
+              "Content-Type": "multipart/form-data"
+            }
+          });         
 
-          const newTranscript = trRes.data.transcript || "";
+          newTranscript = trRes.data.transcript || "";
           setTranscript(newTranscript);
           setRecordURL(audioURL);
 
+        } catch (error) {
+          const msg1 = error?.response?.data.error;
+          const msg2 = error.message;
+          console.error("Upload failed:", msg1 || msg2);
+          setTranscript(msg1 || msg2);
+          return;
+        } finally {
+          setTranslationLoading(false);
+        }
+
+        try{
           setEmojiLoading(true);
-          console.log(newTranscript);
           const emojiRes = await axios.post("http://localhost:3001/api/generate-emojis", 
             { transcript: newTranscript },
-            { headers: { "Content-Type": "application/json" } }
+            { headers: { 
+              "x-user-api-key": apiKey,
+              "Content-Type": "application/json" } }
           );
           console.log(emojiRes);
           const emojiStr = emojiRes.data.join(" ");
           setEmojis(emojiStr || "");
+        }catch(error){
+          const msg1 = error?.response?.data.error;
+          const msg2 = error.message;
+          console.error("Upload failed:", msg1 || msg2);
+          setEmojis(msg1 || msg2);
+          return;
+        }finally{
           setEmojiLoading(false);
-        } catch (error) {
-          console.error("Upload failed:", error?.response?.data || error);
         }
       };
     } catch (err) {

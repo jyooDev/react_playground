@@ -38,3 +38,23 @@
     scrollbar-gutter: stable both-edges;
   }
 }
+
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 60s linear infinite;
+}
+
+.animate-marquee-right{
+  display: inline-block;
+  animation: marquee-right 60s linear infinite;
+}

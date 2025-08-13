@@ -16,8 +16,6 @@ const upload = multer({
   limits: { fileSize: 25 * 1024 * 1024 },
 });
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 
 const ALLOWED_MIME = new Set([
   "audio/webm",
@@ -30,10 +28,15 @@ const ALLOWED_MIME = new Set([
 
 app.post("/api/transcribe", upload.single("file"), async (req, res) => {
   try {
+    const userApiKey = req.headers["x-user-api-key"];
+    if (!userApiKey){
+      return res.status(400).json({error: "No API key provided"});
+    }
     if (!req.file) {
       return res.status(400).json({ error: "file field missing" });
     }
 
+    const openai = new OpenAI({ apiKey: userApiKey });
     const mime = (req.file.mimetype || "").toLowerCase();
     if (![...ALLOWED_MIME].some(t => mime.startsWith(t.split(";")[0]))) {
       return res.status(415).json({ error: `unsupported content-type: ${mime}` });
@@ -55,8 +58,15 @@ app.post("/api/transcribe", upload.single("file"), async (req, res) => {
 
 app.post("/api/generate-emojis", async (req, res) => {
   try {
-    console.log("POST /api/generate-emojis");
+    const userApiKey = req.headers["x-user-api-key"];
+    if (!userApiKey){
+      return res.status(400).json({error: "No API key provided"});
+    }
+    
     const { transcript } = req.body || {};
+
+    const openai = new OpenAI({ apiKey: userApiKey });
+    
     console.log("transcript:", transcript);
 
     if (!transcript || typeof transcript !== "string" || !transcript.trim()) {

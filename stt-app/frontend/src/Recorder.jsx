@@ -14,6 +14,7 @@ export default function Recorder() {
   const recorderRef = useRef(null);
   const streamRef = useRef(null);
   const chunksRef = useRef([]); 
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   async function start() {
     if (listening) return;
@@ -50,7 +51,7 @@ export default function Recorder() {
         form.append("file", fullBlob, "sofar.webm");
         try {
           setTranslationLoading(true);
-          const trRes = await axios.post("http://localhost:3001/api/transcribe", 
+          const trRes = await axios.post(`${API_BASE_URL}/api/transcribe`, 
             form,
           {
             headers: {
@@ -75,7 +76,7 @@ export default function Recorder() {
 
         try{
           setEmojiLoading(true);
-          const emojiRes = await axios.post("http://localhost:3001/api/generate-emojis", 
+          const emojiRes = await axios.post(`${API_BASE_URL}/api/generate-emojis`, 
             { transcript: newTranscript },
             { headers: { 
               "x-user-api-key": apiKey,
